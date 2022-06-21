@@ -2,8 +2,6 @@ package com.entrajuda.museu.user;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,29 +28,22 @@ public class User {
     
     @Column(name="email")
     private String email;
-    
-    
-    @Column(name="type")
-    @Enumerated(EnumType.ORDINAL)
-    private UserType type;
 
     public User(){}
     
-    public User(String password, String name, String salt, String email, UserType type) {
+    public User(String password, String name, String salt, String email) {
         this.password = password;
         this.name = name;
         this.salt = salt;
         this.email = email;
-        this.type = type;
     }
 
-    public User(Integer user_id, String password, String name, String salt, String email, UserType type) {
+    public User(Integer user_id, String password, String name, String salt, String email) {
         this.user_id = user_id;
         this.password = password;
         this.name = name;
         this.salt = salt;
         this.email = email;
-        this.type = type;
     }
     
     public Integer getUser_id() {
@@ -94,15 +85,6 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    public UserType getType() {
-        return type;
-    }
-
-    public void setType(UserType type) {
-        this.type = type;
-    }
-    
     
     
 }

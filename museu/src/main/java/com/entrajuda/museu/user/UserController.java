@@ -1,9 +1,9 @@
 
 package com.entrajuda.museu.user;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,36 +26,18 @@ public class UserController {
         return userRepository.findAll();
     }
     
-    @GetMapping(path="/types")
-    public @ResponseBody List<UserType> getUserTypes(){
-        return Arrays.asList(UserType.values());
-    }
-    
     @PostMapping(path="/add")
     public @ResponseBody String addNewUser(
             @RequestParam String password, 
             @RequestParam String name, 
             @RequestParam String salt,
-            @RequestParam String email,
-            @RequestParam String type){
-        
-        UserType t = null;
-        
-        
-        
-        if (type.equals("ADMIN")){
-            t = UserType.ADMIN;
-        }
-        else if (type.equals("USER")){
-            t = UserType.USER;
-        }
-        else{
+            @RequestParam String email){
+       
+        List<Object> list_names = userRepository.findUserNames();
+        if(list_names.contains(name)){
             return null;
         }
-
-       
-        
-        User newUser = new User(password, name, salt, email, t);
+        User newUser = new User(password, name, salt, email);
         userRepository.save(newUser);
         
         return "Saved";
@@ -75,5 +57,10 @@ public class UserController {
     @GetMapping(path="/byEmail")
     public @ResponseBody User getAdminByEmail(@RequestParam String email){
         return userRepository.findByEmail(email);
+    }
+
+    @GetMapping(path="/byName")
+    public @ResponseBody User getAdminByName(@RequestParam String name){
+        return userRepository.findByName(name);
     }
 }
