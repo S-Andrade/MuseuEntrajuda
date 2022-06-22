@@ -3,8 +3,6 @@ package com.entrajuda.museu.device;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -123,5 +121,26 @@ public class DeviceController {
         return deviceRepository.findAll(filter);
     }
 
+    @GetMapping(path="/counter")
+    public @ResponseBody String getIncreaseCounter(@RequestParam Integer device_id){  
+        Device device;
+        try {
+            Optional<Device> op_device = deviceRepository.findById(device_id);
+            device = op_device.get();
+            
+        } catch (Exception e) {
+            return null;
+        }
 
+        device.setCounter(device.getCounter()+1);
+     
+        deviceRepository.save(device);
+
+        return "Increased";
+    }
+
+    @GetMapping(path="/top")
+    public @ResponseBody Iterable<Object> getTopViewed(){       
+        return deviceRepository.findTopViewed();
+    }
 }
