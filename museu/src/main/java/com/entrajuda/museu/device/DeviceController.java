@@ -1,5 +1,6 @@
 package com.entrajuda.museu.device;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+
+import com.entrajuda.museu.image.Image;
+import com.entrajuda.museu.image.ImageRepository;
+import com.entrajuda.museu.image.ImageUtility;
 import com.entrajuda.museu.specifications.SearchCriteria;
 import com.entrajuda.museu.specifications.SearchOperation;
 import com.entrajuda.museu.user.User;
@@ -30,6 +36,9 @@ public class DeviceController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    ImageRepository imageRepository;
+
     @GetMapping("/all")
     public Iterable<Device> getAllDevices() {
         return deviceRepository.findAll();
@@ -44,7 +53,8 @@ public class DeviceController {
             @RequestParam String description, 
             @RequestParam String localization, 
             @RequestParam Integer year,
-            @RequestParam Integer user_id){
+            @RequestParam Integer user_id,
+            @RequestParam MultipartFile image) throws IOException{
 
         User user;
         try {
@@ -55,9 +65,10 @@ public class DeviceController {
             return null;
         }
 
-        
+        Image new_image = new Image(image.getOriginalFilename(), image.getContentType(), ImageUtility.compressImage(image.getBytes()));
+        imageRepository.save(new_image);
 
-        Device newDevice = new Device(name, description, model, brand, localization, year, user);
+        Device newDevice = new Device(name, description, model, brand, localization, year, user, new_image);
         deviceRepository.save(newDevice);
         
         return "Saved";
@@ -66,7 +77,23 @@ public class DeviceController {
 
     @DeleteMapping(path="/delete")
     public @ResponseBody String deleteDeviceById(@RequestParam Integer device_id){
+        
+        Device device;
+        try {
+            Optional<Device> op_device = deviceRepository.findById(device_id);
+            device = op_device.get();
+            
+        } catch (Exception e) {
+            return null;
+        }
+
+        Image image = device.getImage();
+
+        System.out.println(image.getImage_Id());
+
+        
         deviceRepository.deleteById(device_id);
+        imageRepository.deleteById(image.getImage_Id());
         return "Deleted";
     }
 

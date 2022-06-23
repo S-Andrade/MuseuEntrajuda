@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.entrajuda.museu.image.Image;
 import com.entrajuda.museu.user.User;
 
 @Entity
@@ -49,10 +50,14 @@ public class Device {
     @Column(name="user_name")
     private String user_name;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "image_id", nullable = false)
+    private Image image;
+
 
     public Device(){}
 
-    public Device(String name, String description, String model, String brand, String localization, Integer year,User user){
+    public Device(String name, String description, String model, String brand, String localization, Integer year,User user, Image image){
         this.name = name;
         this.model = model;
         this.brand = brand;
@@ -62,9 +67,10 @@ public class Device {
         this.counter = 0;
         this.user = user;
         this.user_name = user.getName();
+        this.image = image;
     }
 
-    public Device(Integer device_id, String name, String description,String model, String brand, String localization, Integer year, User user){
+    public Device(Integer device_id, String name, String description,String model, String brand, String localization, Integer year, User user, Image image){
         this.device_id = device_id;
         this.name = name;
         this.model = model;
@@ -75,6 +81,7 @@ public class Device {
         this.counter = 0;
         this.user = user;
         this.user_name = user.getName();
+        this.image = image;
     }
 
     public Integer getDevide_Id(){
@@ -157,4 +164,11 @@ public class Device {
         this.user_name=user_name;
     }
 
+    public Image getImage(){
+        return image;
+    }
+
+    public void setImage(Image image){
+        this.image = image;
+    }
 }
